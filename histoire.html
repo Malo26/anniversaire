@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Notre histoire 🎂</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;margin:0}
+body{font-family:Georgia,'Times New Roman',serif;color:#fff;overflow:hidden;background:#222;transition:background 1s}
+#stage{position:relative;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;cursor:pointer}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 32px 90px;opacity:0;transform:scale(.96);transition:opacity .9s,transform .9s;pointer-events:none}
+.scene.on{opacity:1;transform:scale(1);overflow-y:auto}
+.emoji{font-size:clamp(56px,16vw,110px);animation:float 3s ease-in-out infinite}
+.ph{max-height:46vh;max-width:78vw;border-radius:18px;border:6px solid #fff;box-shadow:0 12px 32px rgba(0,0,0,.35);transform:rotate(-3deg);animation:pop 1s both}.scene:nth-child(even) .ph{transform:rotate(3deg)}@keyframes pop{from{opacity:0;transform:scale(.7) rotate(-8deg)}}
+h1{font-size:clamp(28px,8vw,56px);margin:.3em 0;line-height:1.15}
+p{font-size:clamp(18px,4.6vw,28px);max-width:620px;line-height:1.45;margin:.4em 0}
+.scene.on h1,.scene.on p{animation:rise 1s both}
+.scene.on p{animation-delay:.5s}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes float{50%{transform:translateY(-14px) rotate(4deg)}}
+#bar{position:fixed;left:0;top:env(safe-area-inset-top,0px);height:5px;background:#fff;width:0;z-index:5}
+#ctl{opacity:0;pointer-events:none;transition:opacity .4s;position:fixed;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:0;right:0;display:flex;justify-content:center;gap:10px;z-index:5}
+#ctl.show{opacity:1;pointer-events:auto}
+button{font:inherit;font-size:16px;border:0;border-radius:24px;padding:10px 18px;background:rgba(255,255,255,.9);color:#333;cursor:pointer}
+.conf{position:fixed;top:-30px;font-size:24px;animation:fall linear forwards;pointer-events:none;z-index:4}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage"></div>
+<div id="ctl"><button id="prev">◀</button><button id="pp">⏸ Pause</button><button id="next">▶</button></div>
+<script>
+const scenes=[
+ {"e": "🎂", "t": "Joyeux anniversaire, Néné Touti !", "p": "Installe-toi : voici un petit bout de notre histoire.", "c": ["#0f0c29", "#302b63"], "img": "photo1.jpg"},
+ {"t": "Au début…", "p": "Au tout début, il n’y avait rien de spectaculaire. Pas de coup de foudre amical, pas de regards complices. Juste deux personnes qui se croisent, s’observent de loin et se frôlent sans chercher à se connaître.", "c": ["#141e30", "#243b55"], "img": "photo.jpg"},
+ {"e": "🌫️", "t": "", "p": "Entre nous, c’était le règne de l’indifférence polie. On occupait le même espace, mais nos mondes étaient étrangers l’un à l’autre. Chacune de son côté, dans sa bulle, sans imaginer un seul instant que le destin préparait un sacré virage…", "c": ["#1a1a2e", "#16213e"], "img": "images.jpg"},
+ {"e": "🎓", "t": "À l’université…", "p": "Parmi toutes les personnes que l’université pouvait mettre sur mon chemin, il a fallu que je te rencontre, toi…", "c": ["#2b1055", "#4a3a8a"],"img": "photo2.jpg"},
+ {"e": "✨", "t": "Sans le savoir…", "p": "Je venais de rencontrer une personne qui allait prendre une place si spéciale dans ma vie : ma sœur d’une autre mère.", "c": ["#1d0b2e", "#7597de"]},
+ {"t": "Les premiers fous rires", "p": "Ceux qui font mal au ventre et qu’on n’oublie jamais.", "c": ["#200122", "#6f0000"], "img": "photo3.jpg"},
+ {"t": "On ne s’est plus quittées", "p": "Les cours, les pauses, les galères… tout devenait plus léger à deux.", "c": ["#0f2027", "#2c5364"], "img": "photo3.jpg"},
+ {"e": "🌙", "t": "Dans les moments difficiles", "p": "Tu étais là, sans qu’on ait besoin de se l’expliquer.", "c": ["#000428", "#004e92"]},
+ {"t": "Nos balades, nos soirées", "p": "Des instants simples qui sont devenus nos plus beaux souvenirs.", "c": ["#232526", "#414345"], "img": "photo4.jpg"},
+ {"t": "Ce que j’aime chez toi", "p": "Ta force, ton authenticité et ton sourire qui éclaire tout. Ne change surtout pas : tu es juste toi, Khady Loum. Que personne ne te fasse douter de toi, tu es belle, intelligente et forte de caractère.", "c": ["#1d0b2e", "#3d1a5c"], "img": "photo5.jpg"},
+ {"t": "Aujourd’hui, on est des sœurs", "p": "Pas du même sang, mais du même cœur.", "c": ["#141414", "#4a0e2e"], "img": "photo6.jpg"},
+ {"e": "💞", "t": "Sœur d’une autre mère", "p": "Aujourd’hui, le mot « amie » est presque trop petit pour contenir tout ce que tu es pour moi. Tu es passée du statut d’étrangère à celui de membre à part entière de ma famille, une sœur que la vie a choisie pour moi là où le sang ne l’avait pas fait. On se connaît par cœur, avec nos forces, nos failles et nos contradictions.", "c": ["#0f0c29", "#24243e"]},
+ {"e": "🛤️", "t": "Le même chemin", "p": "Regarder en arrière et repenser à cette époque où l’on s’ignorait me fait sourire. Quelle chance immense que la vie ait insisté pour nous mettre sur le même chemin.", "c": ["#141414", "#2c1654"], "img": "photo6.jpg"},
+ {"e": "💌", "t": "Merci d’être toi", "p": "Merci pour ta présence, tes conseils et ton amitié sincère.", "c": ["#0f0c29", "#4a0e2e"]},
+ {"e": "🎉", "t": "Joyeux anniversaire, ma sœur !", "p": "Qu’on continue d’écrire les chapitres de notre vie ensemble, encore et pour longtemps. 🥂✨ Je t’aime fort. À toutes nos prochaines aventures ! — Mame Anta", "c": ["#0f0c29", "#6a1b9a"], "party": 1}
+];
+const dur=()=>Math.max(5500,2500+scenes[Math.max(i,0)].p.length*55),stage=document.getElementById('stage'),bar=document.getElementById('bar');
+let i=-1,timer,playing=true,start;
+scenes.forEach(s=>{const d=document.createElement('div');d.className='scene';
+ d.innerHTML=`${s.img?`<img class="ph" src="${s.img}" alt="" onerror="this.remove()">`:`<div class="emoji">${s.e}</div>`}${s.t?`<h1>${s.t}</h1>`:''}<p${s.p.length>150?' style="font-size:clamp(16px,3.9vw,22px)"':''}>${s.p}</p>`;stage.appendChild(d)});
+const els=[...document.querySelectorAll('.scene')];
+function confetti(){for(let k=0;k<40;k++){const c=document.createElement('div');c.className='conf';
+ c.textContent=['🎉','🎈','✨','💖','🎊'][k%5];c.style.left=Math.random()*100+'vw';
+ c.style.animationDuration=(3+Math.random()*3)+'s';c.style.animationDelay=Math.random()*2+'s';
+ document.body.appendChild(c);setTimeout(()=>c.remove(),8000)}}
+function show(n){i=(n+scenes.length)%scenes.length;els.forEach((e,k)=>e.classList.toggle('on',k===i));
+ const [a,b]=scenes[i].c;document.body.style.background=`linear-gradient(135deg,${a},${b})`;
+ if(scenes[i].party)confetti();start=performance.now();}
+function tick(now){if(playing){const r=Math.min((now-start)/dur(),1);bar.style.width=(r*100)+'%';
+ if(r>=1){if(i<scenes.length-1)show(i+1);else{playing=false;pp.textContent='↻ Rejouer'}}}
+ requestAnimationFrame(tick)}
+const pp=document.getElementById('pp');
+pp.onclick=e=>{e.stopPropagation();if(pp.textContent.includes('Rejouer')){playing=true;pp.textContent='⏸ Pause';show(0);return}
+ playing=!playing;pp.textContent=playing?'⏸ Pause':'▶ Lecture';if(playing)start=performance.now()-(parseFloat(bar.style.width)/100)*dur()};
+document.getElementById('next').onclick=e=>{e.stopPropagation();show(i+1)};
+document.getElementById('prev').onclick=e=>{e.stopPropagation();show(i-1)};
+const ctl=document.getElementById('ctl');let ht;
+function wake(){ctl.classList.add('show');clearTimeout(ht);ht=setTimeout(()=>ctl.classList.remove('show'),2500)}
+['pointermove','pointerdown','touchstart'].forEach(ev=>document.addEventListener(ev,wake));
+show(0);requestAnimationFrame(tick);
+</script>
+</body>
+</html>
